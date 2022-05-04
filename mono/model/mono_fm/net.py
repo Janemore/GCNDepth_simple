@@ -38,7 +38,7 @@ class mono_fm(nn.Module):
                                          self.opt.extractor_pretrained_path)
         self.ssim = SSIM()
         self.backproject = Backproject(self.opt.imgs_per_gpu, self.opt.height, self.opt.width)
-        self.project= Project(self.opt.imgs_per_gpu, self.opt.height, self.opt.width)
+        self.project = Project(self.opt.imgs_per_gpu, self.opt.height, self.opt.width)
 
     def forward(self, inputs):
         outputs = self.DepthDecoder(self.DepthEncoder(inputs["color_aug", 0, 0]))

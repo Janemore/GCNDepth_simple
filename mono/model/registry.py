@@ -2,8 +2,8 @@
 # -*- coding:utf-8 -*-
 # Author: Duanzhixiang(zhixiangduan@deepmotion.ai)
 
-import torch
 import torch.nn as nn
+
 
 class Registry(object):
     def __init__(self, name):

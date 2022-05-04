@@ -29,6 +29,7 @@ class MonoDataset(data.Dataset):
         is_train
         img_ext
     """
+
     def __init__(self,
                  data_path,
                  filenames,

@@ -13,14 +13,14 @@ data = dict(
     frame_ids = FRAME_IDS,
     in_path = '/run/media/armin/DATA/GCNDepth/kitti_data',#path to raw data
     gt_depth_path = '/run/media/armin/DATA/GCNDepth/kitti_data/gt_depths.npz',#path to gt data
-    png = False,#image format
+    png = False, #image format
     stereo_scale = True if 's' in FRAME_IDS else False,
 )
 
 model = dict(
     name = 'mono_fm',# select a model by name
     depth_num_layers = DEPTH_LAYERS,
-    pose_num_layers = POSE_LAYERS,
+    pose_num_laylers = POSE_LAYERS,
     frame_ids = FRAME_IDS,
     imgs_per_gpu = IMGS_PER_GPU,
     height = HEIGHT,

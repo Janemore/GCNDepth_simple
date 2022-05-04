@@ -6,7 +6,6 @@ from mmcv.runner import load_checkpoint
 
 from mono.datasets.get_dataset import get_dataset
 from mono.apis import (train_mono,
-                       init_dist,
                        get_root_logger,
                        set_random_seed)
 from mono.model.registry import MONO
@@ -32,13 +31,6 @@ def parse_args():
                         type=int,
                         default=1024,
                         help='random seed')
-    parser.add_argument('--launcher',
-                        choices=['none', 'pytorch', 'slurm', 'mpi'],
-                        default='pytorch',
-                        help='job launcher')
-    parser.add_argument('--local_rank',
-                        type=int,
-                        default=0)
     args = parser.parse_args()
     return args
 
@@ -49,20 +41,17 @@ def main():
     cfg = Config.fromfile(args.config)
     cfg.work_dir = args.work_dir
 
-    # set cudnn_benchmark
+    ##https:// discuss.pytorch.org/t/ what - does - torch - backends - cudnn - benchmark - do / 5936 / 2
     if cfg.get('cudnn_benchmark', False):
-        torch.backends.cudnn.benchmark = True
+        torch.backends.cudnn.benchmark = True  # simply used to tune the algorithms based on the hardware
 
     if args.resume_from is not None:
         cfg.resume_from = args.resume_from
+
     cfg.gpus = [int(_) for _ in args.gpus.split(',')]
 
     # init distributed env first, since logger depends on the dist info.
-    if args.launcher == 'none':
-        distributed = False
-    else:
-        distributed = True
-        init_dist(args.launcher, **cfg.dist_params)
+    distributed = False
 
     print('cfg is ', cfg)
     # init logger before other steps
@@ -77,6 +66,12 @@ def main():
     model_name = cfg.model['name']
     model = MONO.module_dict[model_name](cfg.model)
 
+    """
+    为什么使用MONO..  
+    SIMPLY a registry 能够通过name直接找到object 
+    .. 
+    """
+
     if cfg.resume_from is not None:
         load_checkpoint(model, cfg.resume_from, map_location='cpu')
     elif cfg.finetune is not None:
@@ -84,17 +79,21 @@ def main():
         checkpoint = torch.load(cfg.finetune, map_location='cpu')
         model.load_state_dict(checkpoint['state_dict'], strict=False)
 
-    train_dataset = get_dataset(cfg.data, training=True)
+    train_dataset = get_dataset(cfg.data, training=True)  # cfg.data is a dictionary
     if cfg.validate:
         val_dataset = get_dataset(cfg.data, training=False)
     else:
         val_dataset = None
 
+    import matplotlib.pyplot as plt
+
+    sample = train_dataset[0]
+
+
     train_mono(model,
                train_dataset,
                val_dataset,
                cfg,
-               distributed=distributed,
                validate=cfg.validate,
                logger=logger)
 

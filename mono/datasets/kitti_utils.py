@@ -47,7 +47,7 @@ def sub2ind(matrixSize, rowSub, colSub):
     return rowSub * (n-1) + colSub - 1
 
 
-def generate_depth_map(calib_dir, velo_filename, cam=2, vel_depth=False):
+def generate_depth_map(calib_dir: object, velo_filename: object, cam: object = 2, vel_depth: object = False) -> object:
     """Generate a depth map from velodyne data
     """
     # load calibration files

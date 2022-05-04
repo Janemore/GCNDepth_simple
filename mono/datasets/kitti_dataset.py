@@ -101,8 +101,8 @@ class KITTIRAWDataset(KITTIDataset):
 
         return odo_pose
 
+class  KITTIOdomDataset(KITTIDataset):
 
-class KITTIOdomDataset(KITTIDataset):
     """KITTI dataset for odometry training and testing
     """
     def __init__(self, *args, **kwargs):
